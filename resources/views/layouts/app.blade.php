@@ -20,6 +20,9 @@
                 @endif
                 @if (auth()->user()->isAdmin())
                     <a href="{{ route('admin.dashboard') }}">Admin</a>
+                    <a href="{{ route('admin.users.index') }}">Users</a>
+                    <a href="{{ route('admin.categories.index') }}">Categories</a>
+                    <a href="{{ route('admin.claims.index') }}">Reports</a>
                 @endif
                 <span>{{ auth()->user()->name }} · {{ str_replace('_', ' ', auth()->user()->role) }}</span>
                 <form method="POST" action="{{ route('logout') }}">

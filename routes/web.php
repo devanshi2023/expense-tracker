@@ -2,6 +2,9 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
+use App\Http\Controllers\Admin\ClaimController as AdminClaimController;
+use App\Http\Controllers\Admin\UserController as AdminUserController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Manager\ClaimReviewController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
@@ -46,4 +49,11 @@ Route::middleware('auth')->group(function () {
     Route::view('/admin/dashboard', 'admin.dashboard')
         ->middleware('role:admin')
         ->name('admin.dashboard');
+
+    Route::middleware('role:admin')->prefix('admin')->name('admin.')->group(function () {
+        Route::resource('users', AdminUserController::class)->except('show');
+        Route::resource('categories', AdminCategoryController::class)->except('show');
+        Route::get('claims', [AdminClaimController::class, 'index'])->name('claims.index');
+        Route::patch('claims/{claim}', [AdminClaimController::class, 'update'])->name('claims.update');
+    });
 });

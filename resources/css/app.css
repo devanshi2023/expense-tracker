@@ -176,6 +176,15 @@ textarea {
     max-width: 220px;
 }
 
+.report-filters {
+    flex-wrap: wrap;
+}
+
+.report-filters input,
+.report-filters select {
+    max-width: 190px;
+}
+
 table {
     border-collapse: collapse;
     width: 100%;
