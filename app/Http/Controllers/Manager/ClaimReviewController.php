@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Manager;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ReviewClaimRequest;
+use App\Mail\ClaimReviewedMail;
 use App\Models\ExpenseClaim;
 use App\Services\BudgetService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 
 class ClaimReviewController extends Controller
 {
@@ -29,6 +31,9 @@ class ClaimReviewController extends Controller
             'reviewed_by' => $request->user()->id,
             'reviewed_at' => now(),
         ]);
+
+        $claim->load(['submitter', 'category', 'reviewer']);
+        Mail::to($claim->submitter->email)->send(new ClaimReviewedMail($claim));
 
         $redirect = redirect()
             ->route('manager.dashboard')

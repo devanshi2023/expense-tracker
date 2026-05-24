@@ -15,7 +15,7 @@
                     <td>{{ number_format($row['spent'], 2) }} / {{ number_format($row['limit'], 2) }}</td>
                     <td>
                         <div class="progress">
-                            <span style="width: {{ $row['percent'] }}%"></span>
+                            <span style="width: {{ min($row['percent'], 100) }}%"></span>
                         </div>
                         {{ $row['percent'] }}%
                     </td>
@@ -29,7 +29,7 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="4">No categories found.</td>
+                    <td colspan="4" class="empty-state">No categories found for this month.</td>
                 </tr>
             @endforelse
         </tbody>

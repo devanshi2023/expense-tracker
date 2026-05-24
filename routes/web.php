@@ -9,6 +9,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Manager\ClaimReviewController;
 use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Team\BudgetController as TeamBudgetController;
+use App\Http\Controllers\Team\DashboardController as TeamDashboardController;
 use App\Http\Controllers\Team\ExpenseClaimController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,7 +26,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard', DashboardController::class)->name('dashboard');
     Route::post('/logout', [LoginController::class, 'destroy'])->name('logout');
 
-    Route::view('/team/dashboard', 'team.dashboard')
+    Route::get('/team/dashboard', TeamDashboardController::class)
         ->middleware('role:team_member,manager,admin')
         ->name('team.dashboard');
 
@@ -54,6 +55,7 @@ Route::middleware('auth')->group(function () {
         Route::resource('users', AdminUserController::class)->except('show');
         Route::resource('categories', AdminCategoryController::class)->except('show');
         Route::get('claims', [AdminClaimController::class, 'index'])->name('claims.index');
+        Route::get('claims/export', [AdminClaimController::class, 'export'])->name('claims.export');
         Route::patch('claims/{claim}', [AdminClaimController::class, 'update'])->name('claims.update');
     });
 });

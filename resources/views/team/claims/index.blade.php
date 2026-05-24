@@ -1,22 +1,27 @@
 @extends('layouts.app', ['title' => 'My Claims'])
 
 @section('content')
-    <section class="page-header row">
-        <div>
-            <h1>My Expense Claims</h1>
-            <p>Pending claims can be edited or deleted.</p>
+    <section class="hero-panel">
+        <div class="page-header">
+            <div>
+                <span class="eyebrow">Claims dashboard</span>
+                <h1>My Expense Claims</h1>
+                <p>Pending claims can be edited or deleted, while approved and rejected items stay easy to scan.</p>
+            </div>
+            <div class="actions">
+                <a class="button" href="{{ route('team.claims.create') }}">New Claim</a>
+            </div>
         </div>
-        <a class="button" href="{{ route('team.claims.create') }}">New Claim</a>
     </section>
 
     <section class="cards">
-        <div class="metric"><span>Total</span><strong>{{ $summary->total ?? 0 }}</strong></div>
-        <div class="metric"><span>Pending</span><strong>{{ $summary->pending ?? 0 }}</strong></div>
-        <div class="metric"><span>Approved</span><strong>{{ $summary->approved ?? 0 }}</strong></div>
-        <div class="metric"><span>Rejected</span><strong>{{ $summary->rejected ?? 0 }}</strong></div>
+        <div class="metric"><span>Total Claims</span><strong>{{ $summary->total ?? 0 }}</strong><p>All claims in your current workspace.</p></div>
+        <div class="metric"><span>Pending Review</span><strong>{{ $summary->pending ?? 0 }}</strong><p>Claims waiting for manager action.</p></div>
+        <div class="metric"><span>Approved</span><strong>{{ $summary->approved ?? 0 }}</strong><p>Requests that already passed review.</p></div>
+        <div class="metric"><span>Rejected</span><strong>{{ $summary->rejected ?? 0 }}</strong><p>Claims returned with comments or issues.</p></div>
     </section>
 
-    <form method="GET" class="filters">
+    <form method="GET" class="filters panel">
         <select name="status">
             <option value="">All statuses</option>
             @foreach ($statuses as $value => $label)
@@ -32,7 +37,7 @@
         </select>
 
         <button type="submit">Filter</button>
-        <a href="{{ route('team.claims.index') }}">Clear</a>
+        <a href="{{ route('team.claims.index') }}" class="button secondary">Clear</a>
     </form>
 
     <div class="table-wrap">
@@ -66,13 +71,13 @@
                                     <button type="submit" class="danger-button">Delete</button>
                                 </form>
                             @else
-                                -
+                                <span class="muted">Locked</span>
                             @endif
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7">No claims found.</td>
+                        <td colspan="7" class="empty-state">No claims found for the current filter.</td>
                     </tr>
                 @endforelse
             </tbody>

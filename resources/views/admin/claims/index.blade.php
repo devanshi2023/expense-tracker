@@ -2,11 +2,14 @@
 
 @section('content')
     <section class="page-header">
-        <h1>Global Claim Report</h1>
-        <p>Filter and override claim statuses.</p>
+        <div>
+            <span class="eyebrow">Reporting hub</span>
+            <h1>Global Claim Report</h1>
+            <p>Filter the claim pipeline and override statuses from one admin report screen.</p>
+        </div>
     </section>
 
-    <form method="GET" class="filters report-filters">
+    <form method="GET" class="filters panel">
         <select name="status">
             <option value="">All statuses</option>
             @foreach ($statuses as $value => $label)
@@ -28,7 +31,8 @@
         <input type="date" name="date_from" value="{{ request('date_from') }}">
         <input type="date" name="date_to" value="{{ request('date_to') }}">
         <button type="submit">Filter</button>
-        <a href="{{ route('admin.claims.index') }}">Clear</a>
+        <a href="{{ route('admin.claims.export', request()->query()) }}" class="button">Export CSV</a>
+        <a href="{{ route('admin.claims.index') }}" class="button secondary">Clear</a>
     </form>
 
     <div class="table-wrap">
@@ -61,7 +65,7 @@
                         </td>
                     </tr>
                 @empty
-                    <tr><td colspan="6">No claims found.</td></tr>
+                    <tr><td colspan="6" class="empty-state">No claims found for the selected filters.</td></tr>
                 @endforelse
             </tbody>
         </table>

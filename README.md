@@ -13,6 +13,7 @@ A Laravel 10 internal expense tracker where team members submit claims, managers
 
 ```bash
 composer install
+npm install
 cp .env.example .env
 php artisan key:generate
 ```
@@ -32,10 +33,29 @@ Run migrations and seeders:
 
 ```bash
 php artisan migrate --seed
+npm run dev
 php artisan serve
 ```
 
 If you use XAMPP, make sure MySQL is running and the database name in `.env` exists.
+
+## Frontend Assets
+
+This project uses Laravel's default Vite setup for loading `resources/css/app.css` and `resources/js/app.js`.
+
+For local development, start the Vite dev server in a separate terminal:
+
+```bash
+npm run dev
+```
+
+For a production-style compiled asset build, run:
+
+```bash
+npm run build
+```
+
+If `npm install` has not been run, the CSS/JS assets will not compile or load correctly.
 
 ## Seeded Accounts
 
@@ -59,6 +79,8 @@ All seeded accounts use password `password`.
 - Admins can manage users, categories, monthly budget limits, and override claim statuses.
 - Budget utilization is calculated per calendar month and resets automatically by month.
 - Bonus API endpoint: `GET /api/claims` returns the authenticated user's claims.
+- Bonus admin CSV export is available on the global claims screen with current filters applied.
+- Claim approval/rejection sends an email notification; `MAIL_MAILER=log` is enough for local review.
 
 ## Design Notes
 
@@ -69,15 +91,3 @@ Claim amounts and category budget limits use `DECIMAL(12,2)`. Currency should no
 The budget limit is soft. `BudgetService::approvalWarning()` returns an `exceeds` boolean and message; the manager controller decides how to display it while still allowing approval.
 
 Admin category deletion is blocked by database constraints if claims exist. In that case the UI reports the issue and the category can be marked inactive instead.
-
-## Tests
-
-Feature tests cover login, claim validation/submission, and manager approve/self-approval behavior.
-
-```bash
-php artisan test
-```
-
-Tests run against in-memory SQLite via `phpunit.xml`, so they do not need local MySQL credentials.
-
-If your PHP install does not include `pdo_sqlite`, enable that extension or point `phpunit.xml` to a disposable MySQL test database before running the suite.

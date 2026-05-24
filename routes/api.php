@@ -18,10 +18,12 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::middleware('auth:sanctum')->get('/claims', function (Request $request) {
-    return $request->user()
+Route::middleware(['web', 'auth'])->get('/claims', function (Request $request) {
+    return response()->json(
+        $request->user()
         ->expenseClaims()
         ->with('category:id,name')
         ->latest('claim_date')
-        ->get();
+        ->get()
+    );
 });

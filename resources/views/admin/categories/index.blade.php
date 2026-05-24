@@ -1,8 +1,12 @@
 @extends('layouts.app', ['title' => 'Categories'])
 
 @section('content')
-    <section class="page-header row">
-        <div><h1>Categories</h1><p>Manage categories and monthly limits.</p></div>
+    <section class="page-header">
+        <div>
+            <span class="eyebrow">Budget setup</span>
+            <h1>Categories</h1>
+            <p>Manage spend categories and monthly budget limits.</p>
+        </div>
         <a class="button" href="{{ route('admin.categories.create') }}">New Category</a>
     </section>
 
@@ -14,7 +18,11 @@
                     <tr>
                         <td>{{ $category->name }}</td>
                         <td>{{ number_format($category->monthly_budget_limit, 2) }}</td>
-                        <td>{{ $category->is_active ? 'Yes' : 'No' }}</td>
+                        <td>
+                            <span class="badge {{ $category->is_active ? 'active' : 'inactive' }}">
+                                {{ $category->is_active ? 'Active' : 'Inactive' }}
+                            </span>
+                        </td>
                         <td class="actions">
                             <a href="{{ route('admin.categories.edit', $category) }}">Edit</a>
                             <form method="POST" action="{{ route('admin.categories.destroy', $category) }}">
