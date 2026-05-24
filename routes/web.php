@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Team\ExpenseClaimController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/dashboard');
@@ -21,6 +22,11 @@ Route::middleware('auth')->group(function () {
     Route::view('/team/dashboard', 'team.dashboard')
         ->middleware('role:team_member,manager,admin')
         ->name('team.dashboard');
+
+    Route::resource('/team/claims', ExpenseClaimController::class)
+        ->middleware('role:team_member,manager,admin')
+        ->names('team.claims')
+        ->except('show');
 
     Route::view('/manager/dashboard', 'manager.dashboard')
         ->middleware('role:manager,admin')
