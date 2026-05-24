@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Team\BudgetController as TeamBudgetController;
 use App\Http\Controllers\Team\ExpenseClaimController;
 use Illuminate\Support\Facades\Route;
 
@@ -27,6 +28,10 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:team_member,manager,admin')
         ->names('team.claims')
         ->except('show');
+
+    Route::get('/team/budgets', TeamBudgetController::class)
+        ->middleware('role:team_member,manager,admin')
+        ->name('team.budgets.index');
 
     Route::view('/manager/dashboard', 'manager.dashboard')
         ->middleware('role:manager,admin')

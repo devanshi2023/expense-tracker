@@ -7,4 +7,5 @@
     </section>
 
     <a class="button" href="{{ route('team.claims.index') }}">Open My Claims</a>
+    <a class="button secondary" href="{{ route('team.budgets.index') }}">View Budgets</a>
 @endsection

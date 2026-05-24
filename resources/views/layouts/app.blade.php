@@ -14,6 +14,7 @@
                 @if (auth()->user()->isTeamMember())
                     <a href="{{ route('team.dashboard') }}">My Claims</a>
                 @endif
+                <a href="{{ route('team.budgets.index') }}">Budgets</a>
                 @if (auth()->user()->isManager())
                     <a href="{{ route('manager.dashboard') }}">Manager</a>
                 @endif

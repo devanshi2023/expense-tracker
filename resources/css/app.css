@@ -228,6 +228,26 @@ th {
     background: #b91c1c;
 }
 
+.button.secondary {
+    background: #334155;
+    margin-left: 8px;
+}
+
+.progress {
+    background: #e2e8f0;
+    border-radius: 999px;
+    height: 8px;
+    margin-bottom: 6px;
+    overflow: hidden;
+    width: 160px;
+}
+
+.progress span {
+    background: #0f766e;
+    display: block;
+    height: 100%;
+}
+
 @media (max-width: 720px) {
     .topbar,
     .nav {
