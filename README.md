@@ -82,6 +82,10 @@ All seeded accounts use password `password`.
 - Bonus admin CSV export is available on the global claims screen with current filters applied.
 - Claim approval/rejection sends an email notification; `MAIL_MAILER=log` is enough for local review.
 
+## Notes
+
+- The optional feature tests for login, claim submission validation, and manager approve/reject are not included in the final submission.
+
 ## Design Notes
 
 Budget logic lives in `App\Services\BudgetService` instead of views or controllers. This keeps the monthly approved-spend query reusable for team budget views, manager approval warnings, and future reports. The service uses SQL aggregation with `sum()` and `groupBy()` so claims are not loaded into PHP and filtered in memory.
