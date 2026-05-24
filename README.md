@@ -1,66 +1,83 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Team Expense Tracker
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 10 internal expense tracker where team members submit claims, managers approve or reject them, and admins manage users, categories, and monthly category budgets.
 
-## About Laravel
+## Stack
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Laravel 10, PHP 8.1+
+- MySQL
+- Blade, vanilla JavaScript-ready layout, Vite CSS
+- Laravel Sanctum is kept from the base install for the authenticated API route
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Setup
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```bash
+composer install
+cp .env.example .env
+php artisan key:generate
+```
 
-## Learning Laravel
+Create a MySQL database, then update `.env`:
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=expense_tracker
+DB_USERNAME=root
+DB_PASSWORD=
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Run migrations and seeders:
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+```bash
+php artisan migrate --seed
+php artisan serve
+```
 
-## Laravel Sponsors
+If you use XAMPP, make sure MySQL is running and the database name in `.env` exists.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## Seeded Accounts
 
-### Premium Partners
+All seeded accounts use password `password`.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+| Role | Email |
+| --- | --- |
+| Admin | admin@example.com |
+| Manager | manager@example.com |
+| Team Member | team1@example.com |
+| Team Member | team2@example.com |
 
-## Contributing
+## Main Features
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- Manual register/login/logout. New registrations are always `team_member`.
+- Role middleware returns `403` for unauthorized role access.
+- Team members can create, edit, delete, and filter their own claims.
+- Claims can only be edited or deleted by the submitter while pending.
+- Managers can approve/reject pending claims with comments.
+- Managers cannot approve their own claims; this is enforced in the controller.
+- Admins can manage users, categories, monthly budget limits, and override claim statuses.
+- Budget utilization is calculated per calendar month and resets automatically by month.
+- Bonus API endpoint: `GET /api/claims` returns the authenticated user's claims.
 
-## Code of Conduct
+## Design Notes
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Budget logic lives in `App\Services\BudgetService` instead of views or controllers. This keeps the monthly approved-spend query reusable for team budget views, manager approval warnings, and future reports. The service uses SQL aggregation with `sum()` and `groupBy()` so claims are not loaded into PHP and filtered in memory.
 
-## Security Vulnerabilities
+Claim amounts and category budget limits use `DECIMAL(12,2)`. Currency should not be stored as float because binary floating-point math can introduce rounding errors. Validation rejects amounts with more than two decimal places.
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+The budget limit is soft. `BudgetService::approvalWarning()` returns an `exceeds` boolean and message; the manager controller decides how to display it while still allowing approval.
 
-## License
+Admin category deletion is blocked by database constraints if claims exist. In that case the UI reports the issue and the category can be marked inactive instead.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## Tests
+
+Feature tests cover login, claim validation/submission, and manager approve/self-approval behavior.
+
+```bash
+php artisan test
+```
+
+Tests run against in-memory SQLite via `phpunit.xml`, so they do not need local MySQL credentials.
+
+If your PHP install does not include `pdo_sqlite`, enable that extension or point `phpunit.xml` to a disposable MySQL test database before running the suite.
