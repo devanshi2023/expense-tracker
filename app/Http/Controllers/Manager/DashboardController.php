@@ -18,16 +18,25 @@ class DashboardController extends Controller
             ->latest('claim_date')
             ->get();
 
+        $approvalWarnings = $pendingClaims
+            ->mapWithKeys(fn (ExpenseClaim $claim) => [$claim->id => $budgetService->approvalWarning($claim)]);
+
         $processedClaims = ExpenseClaim::query()
             ->with(['submitter', 'category', 'reviewer'])
             ->whereIn('status', [ExpenseClaim::STATUS_APPROVED, ExpenseClaim::STATUS_REJECTED])
             ->latest('reviewed_at')
-            ->limit(25)
+            ->get();
+
+        $allClaims = ExpenseClaim::query()
+            ->with(['submitter', 'category', 'reviewer'])
+            ->latest('claim_date')
             ->get();
 
         return view('manager.dashboard', [
             'pendingClaims' => $pendingClaims,
+            'approvalWarnings' => $approvalWarnings,
             'processedClaims' => $processedClaims,
+            'allClaims' => $allClaims,
             'budgetRows' => $budgetService->utilizationForMonth(now()->format('Y-m')),
         ]);
     }

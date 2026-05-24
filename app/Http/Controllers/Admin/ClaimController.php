@@ -11,6 +11,7 @@ use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -100,6 +101,14 @@ class ClaimController extends Controller
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->status))
             ->when($request->filled('category_id'), fn ($query) => $query->where('category_id', $request->category_id))
             ->when($request->filled('user_id'), fn ($query) => $query->where('user_id', $request->user_id))
+            ->when($request->filled('month'), function ($query) use ($request) {
+                $month = Carbon::createFromFormat('Y-m', $request->month);
+
+                $query->whereBetween('claim_date', [
+                    $month->copy()->startOfMonth()->toDateString(),
+                    $month->copy()->endOfMonth()->toDateString(),
+                ]);
+            })
             ->when($request->filled('date_from'), fn ($query) => $query->whereDate('claim_date', '>=', $request->date_from))
             ->when($request->filled('date_to'), fn ($query) => $query->whereDate('claim_date', '<=', $request->date_to));
     }

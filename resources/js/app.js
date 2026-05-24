@@ -15,3 +15,17 @@ document.querySelectorAll('[data-password-toggle]').forEach((toggle) => {
         toggle.setAttribute('aria-label', isHidden ? 'Hide password' : 'Show password');
     });
 });
+
+document.querySelectorAll('[data-approval-confirm]').forEach((button) => {
+    button.addEventListener('click', (event) => {
+        const message = button.getAttribute('data-approval-confirm');
+
+        if (!message) {
+            return;
+        }
+
+        if (!window.confirm(message)) {
+            event.preventDefault();
+        }
+    });
+});

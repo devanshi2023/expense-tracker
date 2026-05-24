@@ -28,6 +28,7 @@
                 <option value="{{ $user->id }}" @selected((string) request('user_id') === (string) $user->id)>{{ $user->name }}</option>
             @endforeach
         </select>
+        <input type="month" name="month" value="{{ request('month') }}">
         <input type="date" name="date_from" value="{{ request('date_from') }}">
         <input type="date" name="date_to" value="{{ request('date_to') }}">
         <button type="submit">Filter</button>
