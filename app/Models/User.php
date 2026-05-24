@@ -6,6 +6,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
@@ -61,5 +62,15 @@ class User extends Authenticatable
     public function isTeamMember(): bool
     {
         return $this->role === self::ROLE_TEAM_MEMBER;
+    }
+
+    public function expenseClaims(): HasMany
+    {
+        return $this->hasMany(ExpenseClaim::class);
+    }
+
+    public function reviewedClaims(): HasMany
+    {
+        return $this->hasMany(ExpenseClaim::class, 'reviewed_by');
     }
 }
