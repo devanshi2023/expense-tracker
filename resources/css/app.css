@@ -248,6 +248,24 @@ th {
     height: 100%;
 }
 
+.review-form {
+    display: grid;
+    gap: 8px;
+    min-width: 260px;
+}
+
+.review-form textarea {
+    min-height: 70px;
+}
+
+.muted {
+    color: #64748b;
+}
+
+h2 {
+    margin-top: 28px;
+}
+
 @media (max-width: 720px) {
     .topbar,
     .nav {

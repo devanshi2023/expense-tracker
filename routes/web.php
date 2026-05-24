@@ -3,6 +3,8 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Manager\ClaimReviewController;
+use App\Http\Controllers\Manager\DashboardController as ManagerDashboardController;
 use App\Http\Controllers\Team\BudgetController as TeamBudgetController;
 use App\Http\Controllers\Team\ExpenseClaimController;
 use Illuminate\Support\Facades\Route;
@@ -33,9 +35,13 @@ Route::middleware('auth')->group(function () {
         ->middleware('role:team_member,manager,admin')
         ->name('team.budgets.index');
 
-    Route::view('/manager/dashboard', 'manager.dashboard')
+    Route::get('/manager/dashboard', ManagerDashboardController::class)
         ->middleware('role:manager,admin')
         ->name('manager.dashboard');
+
+    Route::patch('/manager/claims/{claim}/review', [ClaimReviewController::class, 'update'])
+        ->middleware('role:manager,admin')
+        ->name('manager.claims.review');
 
     Route::view('/admin/dashboard', 'admin.dashboard')
         ->middleware('role:admin')
