@@ -11,6 +11,15 @@
         <a class="brand" href="{{ route('dashboard') }}">Team Expense Tracker</a>
         <nav class="nav">
             @auth
+                @if (auth()->user()->isTeamMember())
+                    <a href="{{ route('team.dashboard') }}">My Claims</a>
+                @endif
+                @if (auth()->user()->isManager())
+                    <a href="{{ route('manager.dashboard') }}">Manager</a>
+                @endif
+                @if (auth()->user()->isAdmin())
+                    <a href="{{ route('admin.dashboard') }}">Admin</a>
+                @endif
                 <span>{{ auth()->user()->name }} · {{ str_replace('_', ' ', auth()->user()->role) }}</span>
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
